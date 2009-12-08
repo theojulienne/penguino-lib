@@ -18,12 +18,29 @@ int main( void ) {
    uart_stdio_init( );
    
    printf( "Hello World\r\n" );
-   
-   adc_init( );
 
+   
+   // flash status LED
    statusLed_init( );
    
+   statusLed_red( );
+   delay_ms( 300 );
+   
+   statusLed_orange( );
+   delay_ms( 300 );
+   
+   statusLed_green( );
+   delay_ms( 300 );
+   
+   statusLed_off( );
+   delay_ms( 300 );
+   
+   
+   // take ADC readings
+   adc_init( );
+   
    while( 1 ) {
+      // read ADC reading on port A, pin 0
       uint16_t potReading = adc_read( 0 );
       
       if ( potReading < LOW_READING ) {
@@ -35,13 +52,7 @@ int main( void ) {
          statusLed_orange( );
       }
       
-      delay_ms( 500 );
-      
       printf( "ADC Reading: %d\r\n", potReading );
-      
-      statusLed_off( );
-      
-      delay_ms( 500 );
    }
 
    return 0;
