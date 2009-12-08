@@ -21,7 +21,7 @@ int main( void ) {
    adc_init( );
 
    statusLed_init( );
-      
+   
    while( 1 ) {
       
       uint16_t potReading = adc_read( 0 );
