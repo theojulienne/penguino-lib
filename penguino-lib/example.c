@@ -36,9 +36,19 @@ int main( void ) {
    delay_ms( 300 );
    
    
-   // take ADC readings
+   // Port B pin 0 is an output
+   output_init( B, 0 );
+   
+   // Port B pin 1 is an input with a pull-up
+   pullupInput_init( B, 1 );
+   
+   // initialise ADC
    adc_init( );
    
+   // port A pin 0 is for ADC reading
+   adcInput_init( 0 );
+   
+   // take ADC readings
    while( 1 ) {
       // read ADC reading on port A, pin 0
       uint16_t potReading = adc_read( 0 );
@@ -53,6 +63,16 @@ int main( void ) {
       }
       
       printf( "ADC Reading: %d\r\n", potReading );
+      
+      if ( readPin( B, 1 ) ) {
+         printf( "Port B Pin 1 Active\r\n" );
+         
+         // drive B0 high whenever B1 is high
+         drivePin( B, 0, High );
+      } else {
+         
+         drivePin( B, 0, Low );
+      }
    }
 
    return 0;
