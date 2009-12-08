@@ -4,7 +4,7 @@
 #include "penguino/uart/uart-stdio.h"
 #include "penguino/io.h"
 
-#define UART_BAUD_RATE 9600
+#define UART_BAUD_RATE 500000
 
 #define LOW_READING  341
 #define HIGH_READING 682
