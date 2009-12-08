@@ -3,6 +3,7 @@
 #include "penguino/uart/uart.h"
 #include "penguino/uart/uart-stdio.h"
 #include "penguino/io.h"
+#include "penguino/time.h"
 
 #define UART_BAUD_RATE 500000
 
@@ -23,7 +24,6 @@ int main( void ) {
    statusLed_init( );
    
    while( 1 ) {
-      
       uint16_t potReading = adc_read( 0 );
       
       if ( potReading < LOW_READING ) {
@@ -35,7 +35,13 @@ int main( void ) {
          statusLed_orange( );
       }
       
-      printf( "Reading Pot: %d\r\n", potReading );
+      delay_ms( 500 );
+      
+      printf( "ADC Reading: %d\r\n", potReading );
+      
+      statusLed_off( );
+      
+      delay_ms( 500 );
    }
 
    return 0;
