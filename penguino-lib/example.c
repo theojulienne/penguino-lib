@@ -68,10 +68,10 @@ int main( void ) {
          printf( "Port B Pin 1 Active\r\n" );
          
          // drive B0 high whenever B1 is high
-         drivePin( B, 0, High );
+         drivePin( B, 0, high );
       } else {
          
-         drivePin( B, 0, Low );
+         drivePin( B, 0, low );
       }
    }
 

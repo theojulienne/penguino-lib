@@ -43,7 +43,7 @@ LICENSE:
 
 
 typedef enum { A, B, C, D } Port;
-typedef enum { Low=0, High=1 } PinValue;
+typedef enum { low=0, high=1, Low=0, High=1 } PinValue;
 
 // Status LED
 
