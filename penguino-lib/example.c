@@ -34,6 +34,8 @@ int main( void ) {
          // in the middle
          statusLed_orange( );
       }
+      
+      printf( "Reading Pot: %d\r\n", potReading );
    }
 
    return 0;
