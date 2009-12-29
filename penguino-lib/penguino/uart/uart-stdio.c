@@ -36,9 +36,12 @@ LICENSE:
     
 ************************************************************************/
 
+#include "../io.h"
 #include <avr/io.h>
 #include <stdio.h>
 #include "uart.h"
+
+static bool echo_enabled = false;
 
 static int uart_stdio_putchar( char c, FILE *stream ) {
 	uart_putc( c );
@@ -46,8 +49,26 @@ static int uart_stdio_putchar( char c, FILE *stream ) {
 	return 0;
 }
 
-FILE uart_out = FDEV_SETUP_STREAM( uart_stdio_putchar, NULL, _FDEV_SETUP_WRITE );
+static int uart_stdio_getchar( FILE *stream ) {
+    while ( !uart_hasData( ) )
+        ; // wait...
+    
+    int c = uart_getc( );
+	
+	if ( echo_enabled && c != _FDEV_ERR && c != _FDEV_EOF ) {
+        uart_putc( c );
+	}
+	
+    return c;
+}
+
+static FILE uart_io = FDEV_SETUP_STREAM( uart_stdio_putchar, uart_stdio_getchar, _FDEV_SETUP_RW );
 
 void uart_stdio_init( ) {
-	stdout = &uart_out;
+	stdout = &uart_io;
+	stdin = &uart_io;
+}
+
+void uart_stdio_echo( bool enable ) {
+    echo_enabled = enable;
 }

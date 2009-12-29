@@ -38,11 +38,15 @@ LICENSE:
     
 ************************************************************************/
 
+#include "../io.h"
+
 extern void uart_init( uint32_t baudrate );
 
 extern void uart_putc( unsigned char data );
 
 extern void uart_puts( const char *s );
+
+extern bool uart_hasData( void );
 
 extern unsigned char uart_getc( void );
 

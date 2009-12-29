@@ -38,6 +38,11 @@ LICENSE:
     
 ************************************************************************/
 
-void uart_stdio_init( );
+extern void uart_stdio_init( );
+
+// enables or disables echo of received characters useful when accepting 
+// user input, but should be disabled for software interaction.
+// by default echo is disabled.
+extern void uart_stdio_echo( bool enable );
 
 #endif
