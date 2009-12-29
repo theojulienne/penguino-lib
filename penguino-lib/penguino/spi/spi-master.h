@@ -1,14 +1,14 @@
-#ifndef UART_H
-#define UART_H
+#ifndef SPI_H
+#define SPI_H
 /************************************************************************
-Title:    UART for the Penguino AVR
-Author:   David Collien (Icy Labs)
+Title:    SPI for the Penguino AVR
+Author:   Theo Julienne (Icy Labs)
 Software: AVR-GCC 4.1, AVR Libc 1.4
 Hardware: Penguino AVR
 License:  MIT License
 
 DESCRIPTION:
-    Interface for initialising, sending and receiving data over UART
+    Interface for initialising, sending and receiving data over SPI
     
 LICENSE:
     Copyright (C) 2009 Icy Labs Pty Ltd.
@@ -40,23 +40,14 @@ LICENSE:
 
 #include "../common.h"
 
-extern void uart_init_scaled( uint32_t scaledBaud );
+#define spiMaster_clockDiv2  ( (0 << SPR1) | (0 << SPR0) )
+#define spiMaster_clockDiv8  ( (0 << SPR1) | (1 << SPR0) )
+#define spiMaster_clockDiv32 ( (1 << SPR1) | (0 << SPR0) )
+#define spiMaster_clockDiv64 ( (1 << SPR1) | (1 << SPR0) )
 
-static inline void uart_init( uint32_t baudrate ) {
-	unsigned int scaledBaud = ((F_CPU/16)/baudrate)-1;
-	uart_init_scaled( scaledBaud );
-}
-
-extern void uart_putc( unsigned char data );
-
-extern void uart_puts( const char *s );
-
-extern bool uart_hasData( void );
-
-extern void uart_waitData( void );
-
-extern unsigned char uart_getc( void );
-
-extern void uart_setBlocking( bool blocking );
+extern void spiMaster_init( ubyte clockRate );
+extern void spiMaster_disable( void );
+extern void spiMaster_transmit( ubyte data );
+extern ubyte spiMaster_receive( void );
 
 #endif

@@ -52,6 +52,7 @@ static volatile RingBuff_t UARTInputBuffer;  // for receiving
 static volatile RingBuff_t UARTOutputBuffer; // for sending
 static volatile unsigned char lastRxError;
 
+static volatile bool uart_blocking = false;
 
 // Receive from UART
 ISR( USART_RXC_vect ) {
@@ -74,10 +75,7 @@ ISR( USART_UDRE_vect ) {
 	}
 }
 
-void uart_init( uint32_t baudrate ) {
-	
-	unsigned int scaledBaud = ((F_CPU/16)/baudrate)-1;
-	
+void uart_init_scaled( uint32_t scaledBaud ) {
 	// enable interrupts
 	sei( );
 	
@@ -115,6 +113,19 @@ bool uart_hasData( void ) {
 	return (UARTInputBuffer.Elements > 0);
 }
 
-unsigned char uart_getc( void ) {	 
+void uart_waitData( void ) {
+	while ( !uart_hasData( ) )
+		; // snooze
+}
+
+unsigned char uart_getc( void ) {
+	if ( uart_blocking ) {
+		uart_waitData( );
+	}
+	
 	return Buffer_GetElement( &UARTInputBuffer );
+}
+
+void uart_setBlocking( bool blocking ) {
+	uart_blocking = true;
 }

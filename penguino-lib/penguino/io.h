@@ -41,7 +41,6 @@ LICENSE:
 #include "common.h"
 #include "avr/io.h"
 
-
 typedef enum { A, B, C, D } Port;
 typedef enum { low=0, high=1, Low=0, High=1 } PinValue;
 
@@ -62,7 +61,7 @@ static inline void statusLed_red( ) {
 }
 
 static inline void statusLed_green( ) {
-   statusLed_off( );
+	statusLed_off( );
 	PORTC |= GREEN_STATUS;
 }
 

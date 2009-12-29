@@ -3,4 +3,6 @@
 
 typedef enum { false=0, true } bool;
 
+typedef unsigned char ubyte;
+
 #endif
