@@ -51,7 +51,7 @@ int main( void ) {
 	// take ADC readings
 	while( 1 ) {
 		// read ADC reading on port A, pin 0
-		uint16_t potReading = adc_read( 0 );
+		uint16_t potReading = adc_read( A0 );
 		
 		if ( potReading < LOW_READING ) {
 			statusLed_green( );
