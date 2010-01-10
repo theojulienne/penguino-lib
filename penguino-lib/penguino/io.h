@@ -87,26 +87,26 @@ typedef enum { low=0, high=1, Low=0, High=1 } PinValue;
 #define RED_STATUS (1<<7)
 #define ORANGE_STATUS (GREEN_STATUS | RED_STATUS)
 
-static inline void statusLed_off( ) {
+static inline void statusLed_off( void ) {
 	PORTC &= (~LED_PINS);
 }
 
-static inline void statusLed_red( ) {
+static inline void statusLed_red( void ) {
 	statusLed_off( );
 	PORTC |= RED_STATUS;
 }
 
-static inline void statusLed_green( ) {
+static inline void statusLed_green( void ) {
 	statusLed_off( );
 	PORTC |= GREEN_STATUS;
 }
 
-static inline void statusLed_orange( ) {
+static inline void statusLed_orange( void ) {
 	statusLed_off( );
 	PORTC |= ORANGE_STATUS;
 }
 
-static inline void statusLed_init( ) {
+static inline void statusLed_init( void ) {
 	DDRC |= LED_PINS;
 	statusLed_off( );
 }
@@ -209,7 +209,7 @@ static inline uint8_t readPort( Port port ) {
 	return 0;
 }
 
-static inline bool readPin( Pin portPin ) {
+static inline PinValue readPin( Pin portPin ) {
 	uint8_t pin  = PORT_MASK & portPin;
 	Port    port = portPin >> PORT_SHIFT;
 	uint8_t portMask = (1<<pin);
