@@ -41,7 +41,43 @@ LICENSE:
 #include "common.h"
 #include "avr/io.h"
 
+
+#define PORT_SHIFT 5
+#define PORT_MASK (0x1F)
+
 typedef enum { A, B, C, D } Port;
+
+
+typedef enum {
+	A0 = ((A << PORT_SHIFT) | 0),
+	A1 = ((A << PORT_SHIFT) | 1),
+	A2 = ((A << PORT_SHIFT) | 2),
+	A3 = ((A << PORT_SHIFT) | 3),
+	A4 = ((A << PORT_SHIFT) | 4),
+	A5 = ((A << PORT_SHIFT) | 5),
+	A6 = ((A << PORT_SHIFT) | 6),
+	A7 = ((A << PORT_SHIFT) | 7),
+	
+	B0 = ((B << PORT_SHIFT) | 0),
+	B1 = ((B << PORT_SHIFT) | 1),
+	B2 = ((B << PORT_SHIFT) | 2),
+	B3 = ((B << PORT_SHIFT) | 3),
+	B4 = ((B << PORT_SHIFT) | 4),
+	B5 = ((B << PORT_SHIFT) | 5),
+	B6 = ((B << PORT_SHIFT) | 6),
+	B7 = ((B << PORT_SHIFT) | 7),
+	
+	C0 = ((C << PORT_SHIFT) | 0),
+	C1 = ((C << PORT_SHIFT) | 1),
+	
+	D2 = ((C << PORT_SHIFT) | 2),
+	D3 = ((C << PORT_SHIFT) | 3),
+	D4 = ((C << PORT_SHIFT) | 4),
+	D5 = ((C << PORT_SHIFT) | 5),
+	D6 = ((C << PORT_SHIFT) | 6),
+	D7 = ((C << PORT_SHIFT) | 7)
+} Pin;
+
 typedef enum { low=0, high=1, Low=0, High=1 } PinValue;
 
 // Status LED
@@ -80,7 +116,9 @@ static inline void statusLed_init( ) {
 
 // Digital I/O
 
-static inline void floatingInput_init( Port port, uint8_t pin ) {
+static inline void floatingInput_init( Pin portPin ) {
+	uint8_t pin  = PORT_MASK & portPin;
+	Port    port = portPin >> PORT_SHIFT;
 	uint8_t mask = ~(1<<pin);
 	switch( port ) {
 		case A:
@@ -104,7 +142,9 @@ static inline void floatingInput_init( Port port, uint8_t pin ) {
 	}
 }
 
-static inline void pullupInput_init( Port port, uint8_t pin ) {
+static inline void pullupInput_init( Pin portPin ) {
+	uint8_t pin  = PORT_MASK & portPin;
+	Port    port = portPin >> PORT_SHIFT;
 	uint8_t ddrMask  = ~(1<<pin);
 	uint8_t portMask = (1<<pin);
 	switch( port ) {
@@ -129,7 +169,9 @@ static inline void pullupInput_init( Port port, uint8_t pin ) {
 	}	
 }
 
-static inline void output_init( Port port, uint8_t pin ) {
+static inline void output_init( Pin portPin ) {
+	uint8_t pin  = PORT_MASK & portPin;
+	Port    port = portPin >> PORT_SHIFT;
 	uint8_t ddrMask  = (1<<pin);
 	uint8_t portMask = ~(1<<pin);
 	switch( port ) {
@@ -167,7 +209,9 @@ static inline uint8_t readPort( Port port ) {
 	return 0;
 }
 
-static inline bool readPin( Port port, uint8_t pin ) {
+static inline bool readPin( Pin portPin ) {
+	uint8_t pin  = PORT_MASK & portPin;
+	Port    port = portPin >> PORT_SHIFT;
 	uint8_t portMask = (1<<pin);
 	
 	return (readPort( port ) & portMask) != 0;
@@ -183,7 +227,9 @@ static inline void drivePort( Port port, uint8_t value ) {
 	}
 }
 
-static inline void drivePin( Port port, uint8_t pin, PinValue value ) {
+static inline void drivePin( Pin portPin, PinValue value ) {
+	uint8_t pin  = PORT_MASK & portPin;
+	Port    port = portPin >> PORT_SHIFT;
 	uint8_t mask = (1<<pin);
 	if ( value == High ) {
 		switch( port ) {
@@ -208,41 +254,40 @@ static inline void drivePin( Port port, uint8_t pin, PinValue value ) {
 
 
 // ADC
-
-#define ADC_PORT A
-
-static inline void adcInput_init( uint8_t pin ) {
-	floatingInput_init( ADC_PORT, pin );
+static inline void adcInput_init( Pin portPin ) {
+	floatingInput_init( portPin );
 }
 
 static inline void adc_init( ) {
-   // enable the ADC, ADPS[0..2] bits = div clock by 128
-   ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
-        
-   // clear out the ADMUX bits
-   ADMUX = 0x00;
-        
-   // use AVCC (the pin) as reference (REFS[0..1] = 01)
-   // pin 'AVCC' on Penguino should be connected to VCC (use a cap for extra noise reduction)
-   ADMUX |= (1<<REFS0);
+	// enable the ADC, ADPS[0..2] bits = div clock by 128
+	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
+		  
+	// clear out the ADMUX bits
+	ADMUX = 0x00;
+		  
+	// use AVCC (the pin) as reference (REFS[0..1] = 01)
+	// pin 'AVCC' on Penguino should be connected to VCC (use a cap for extra noise reduction)
+	ADMUX |= (1<<REFS0);
 }
 
-static inline uint16_t adc_read( uint8_t pin ) {
-   // set flip the lower bits of ADMUX (previously zero) to choose the ADC pin
-   ADMUX ^= pin;
-   
-   // start a conversion
-   ADCSRA |= (1<<ADSC);
-   
-   // wait for the conversion to complete
-   while ( ADCSRA & (1<<ADSC) ) {
-      // contemplate the meaning of life
-   }
-   
-   // unset the pin (back to zero)
-   ADMUX ^= pin;
+static inline uint16_t adc_read( Pin portPin ) {
+	uint8_t pin  = PORT_MASK & portPin;
+	
+	// set flip the lower bits of ADMUX (previously zero) to choose the ADC pin
+	ADMUX ^= pin;
+	
+	// start a conversion
+	ADCSRA |= (1<<ADSC);
+	
+	// wait for the conversion to complete
+	while ( ADCSRA & (1<<ADSC) ) {
+		// contemplate the meaning of life
+	}
+	
+	// unset the pin (back to zero)
+	ADMUX ^= pin;
 
-   return ADCW; // avr-libc short-cut for combining ADCL and ADCH into a 16-bit register
+	return ADCW; // avr-libc short-cut for combining ADCL and ADCH into a 16-bit register
 }
 
 

@@ -37,10 +37,10 @@ int main( void ) {
 	
 	
 	// Port B pin 0 is an output
-	output_init( B, 0 );
+	output_init( B0 );
 	
 	// Port B pin 1 is an input with a pull-up
-	pullupInput_init( B, 1 );
+	pullupInput_init( B1 );
 	
 	// initialise ADC
 	adc_init( );
@@ -64,14 +64,14 @@ int main( void ) {
 		
 		printf( "ADC Reading: %d\r\n", potReading );
 		
-		if ( readPin( B, 1 ) ) {
+		if ( readPin( B1 ) ) {
 			printf( "Port B Pin 1 Active\r\n" );
 			
 			// drive B0 high whenever B1 is high
-			drivePin( B, 0, high );
+			drivePin( B0, high );
 		} else {
 			
-			drivePin( B, 0, low );
+			drivePin( B0, low );
 		}
         
         // sleep for a bit to avoid flooding UART
