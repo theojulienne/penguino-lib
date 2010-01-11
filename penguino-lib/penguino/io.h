@@ -45,7 +45,7 @@ LICENSE:
 #define PORT_SHIFT 5
 #define PORT_MASK (0x1F)
 
-typedef enum { A, B, C, D } Port;
+typedef enum { A=0, B=1, C=2, D=3 } Port;
 
 
 typedef enum {
@@ -70,12 +70,12 @@ typedef enum {
 	C0 = ((C << PORT_SHIFT) | 0),
 	C1 = ((C << PORT_SHIFT) | 1),
 	
-	D2 = ((C << PORT_SHIFT) | 2),
-	D3 = ((C << PORT_SHIFT) | 3),
-	D4 = ((C << PORT_SHIFT) | 4),
-	D5 = ((C << PORT_SHIFT) | 5),
-	D6 = ((C << PORT_SHIFT) | 6),
-	D7 = ((C << PORT_SHIFT) | 7)
+	D2 = ((D << PORT_SHIFT) | 2),
+	D3 = ((D << PORT_SHIFT) | 3),
+	D4 = ((D << PORT_SHIFT) | 4),
+	D5 = ((D << PORT_SHIFT) | 5),
+	D6 = ((D << PORT_SHIFT) | 6),
+	D7 = ((D << PORT_SHIFT) | 7)
 } Pin;
 
 typedef enum { low=0, high=1, Low=0, High=1 } PinValue;
@@ -219,10 +219,10 @@ static inline PinValue readPin( Pin portPin ) {
 
 static inline void drivePort( Port port, uint8_t value ) {
 	switch( port ) {
-		case A: PORTA = value; 
-		case B: PORTB = value;
-		case C: PORTC = value;
-		case D: PORTD = value;
+		case A: PORTA = value; break; 
+		case B: PORTB = value; break;
+		case C: PORTC = value; break;
+		case D: PORTD = value; break;
 		default: break;
 	}
 }
@@ -233,18 +233,18 @@ static inline void drivePin( Pin portPin, PinValue value ) {
 	uint8_t mask = (1<<pin);
 	if ( value == High ) {
 		switch( port ) {
-			case A: PORTA |= mask; 
-			case B: PORTB |= mask;
-			case C: PORTC |= mask;
-			case D: PORTD |= mask;
+			case A: PORTA |= mask; break; 
+			case B: PORTB |= mask; break;
+			case C: PORTC |= mask; break;
+			case D: PORTD |= mask; break;
 			default: break;
 		}
 	} else {
 		switch( port ) {
-			case A: PORTA &= ~mask; 
-			case B: PORTB &= ~mask;
-			case C: PORTC &= ~mask;
-			case D: PORTD &= ~mask;
+			case A: PORTA &= ~mask; break; 
+			case B: PORTB &= ~mask; break;
+			case C: PORTC &= ~mask; break;
+			case D: PORTD &= ~mask; break;
 			default: break;
 		}		
 	}
