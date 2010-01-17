@@ -142,6 +142,29 @@ static inline void floatingInput_init( Pin portPin ) {
 	}
 }
 
+static inline void floatingInput_initPort( Port port ) {
+	switch( port ) {
+		case A:
+			DDRA  = 0x00;
+			PORTA = 0x00; 
+			break;
+		case B:
+			DDRB  = 0x00;
+			PORTB = 0x00;
+			break;
+		case C:
+			DDRC  = 0x00;
+			PORTC = 0x00;
+			break;
+		case D:
+			DDRD  = 0x00;
+			PORTD = 0x00;	
+			break;
+		default:
+			break;
+	}	
+}
+
 static inline void pullupInput_init( Pin portPin ) {
 	uint8_t pin  = PORT_MASK & portPin;
 	Port    port = portPin >> PORT_SHIFT;
@@ -169,6 +192,29 @@ static inline void pullupInput_init( Pin portPin ) {
 	}	
 }
 
+static inline void pullupInput_initPort( Port port ) {
+	switch( port ) {
+		case A:
+			DDRA  = 0x00;
+			PORTA = 0xFF; 
+			break;
+		case B:
+			DDRB  = 0x00;
+			PORTB = 0xFF;
+			break;
+		case C:
+			DDRC  = 0x00;
+			PORTC = 0xFF;
+			break;
+		case D:
+			DDRD  = 0x00;
+			PORTD = 0xFF;	
+			break;
+		default:
+			break;
+	}	
+}
+
 static inline void output_init( Pin portPin ) {
 	uint8_t pin  = PORT_MASK & portPin;
 	Port    port = portPin >> PORT_SHIFT;
@@ -190,6 +236,29 @@ static inline void output_init( Pin portPin ) {
 		case D:
 			DDRD  |= ddrMask;
 			PORTD &= portMask;	
+			break;
+		default:
+			break;
+	}	
+}
+
+static inline void output_initPort( Port port ) {
+	switch( port ) {
+		case A:
+			DDRA  = 0xFF;
+			PORTA = 0x00; 
+			break;
+		case B:
+			DDRB  = 0xFF;
+			PORTB = 0x00;
+			break;
+		case C:
+			DDRC  = 0xFF;
+			PORTC = 0x00;
+			break;
+		case D:
+			DDRD  = 0xFF;
+			PORTD = 0x00;	
 			break;
 		default:
 			break;
