@@ -286,6 +286,13 @@ static inline PinValue readPin( Pin portPin ) {
 	return (readPort( port ) & portMask) != 0;
 }
 
+#if defined (__AVR_ATmega32__)
+// hacky, but significantly faster, version that lets most of
+// the calulations happen at compile time.
+#define drivePort(port,value) do{ \
+	_MMIO_BYTE(__SFR_OFFSET + 0x1B - (port * 3)) = (value); \
+} while(0);
+#else
 static inline void drivePort( Port port, uint8_t value ) {
 	switch( port ) {
 		case A: PORTA = value; break; 
@@ -295,11 +302,27 @@ static inline void drivePort( Port port, uint8_t value ) {
 		default: break;
 	}
 }
+#endif
 
+
+#if defined (__AVR_ATmega32__)
+// hacky, but significantly faster, version that lets most of
+// the calulations happen at compile time.
+#define __get_port(portPin) (portPin >> PORT_SHIFT)
+#define __get_pin(portPin) (portPin & PORT_MASK)
+#define drivePin(portPin,value) do{ \
+	if ( value == high ) { \
+		_MMIO_BYTE(__SFR_OFFSET + 0x1B - (__get_port(portPin) * 3)) |= _BV(__get_pin(portPin)); \
+	} else { \
+		_MMIO_BYTE(__SFR_OFFSET + 0x1B - (__get_port(portPin) * 3)) &= ~_BV(__get_pin(portPin)); \
+	} \
+} while(0);
+#else
 static inline void drivePin( Pin portPin, PinValue value ) {
 	uint8_t pin  = PORT_MASK & portPin;
 	Port    port = portPin >> PORT_SHIFT;
 	uint8_t mask = (1<<pin);
+	
 	if ( value == High ) {
 		switch( port ) {
 			case A: PORTA |= mask; break; 
@@ -318,6 +341,7 @@ static inline void drivePin( Pin portPin, PinValue value ) {
 		}		
 	}
 }
+#endif
 
 
 
